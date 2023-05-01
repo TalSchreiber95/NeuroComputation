@@ -2,11 +2,13 @@ import numpy as np
 from PIL import Image
 import os
 from setting import config
+from utils import validateFileNames
 
-
-images = ["bet1.png", "bet2.png", "bet3.png", "lamed1.png", "lamed2.png", "lamed3.png", "mem1.png", "mem2.png", "mem3.png"]
+images = ["bet1.png", "bet2.png", "bet3.png", "lamed1.png",
+          "lamed2.png", "lamed3.png", "mem1.png", "mem2.png", "mem3.png"]
 output_folder_path = 'data/output'
 input_folder_path = 'data/input'
+
 
 def image_to_vector(img, vector):
     width, height = img.size
@@ -15,7 +17,8 @@ def image_to_vector(img, vector):
         for i in range(10):
             x = i * grid_size[0]
             y = j * grid_size[1]
-            pixels = img.crop((x, y, x + grid_size[0], y + grid_size[1])).getdata()
+            pixels = img.crop(
+                (x, y, x + grid_size[0], y + grid_size[1])).getdata()
             if 255 in pixels:
                 vector.append(1)
             else:
@@ -37,6 +40,28 @@ def main():
         for file_name in file_list:
             file_path = os.path.join(output_folder_path, file_name)
             os.remove(file_path)
+
+    input_path = config['input_path']
+    images_dictionary = config['images_dictionary']
+
+    for r, d, f in os.walk(input_path):
+        for file in f:
+            if validateFileNames(file, images_dictionary) == True:
+                print('file:', file)
+                
+            filePath = os.path.join(r, file)
+            print('Start working on file: ', file)
+            print('Applications left:', num_applications)
+            print('Progress: {:.2f}%'.format(
+                abs(100 - (percent_increment * num_applications))))
+            num_applications -= 1
+
+            try:
+                staticAnalyzer.run(filePath, path, '', label)
+                print()
+            except Exception as e:
+                print(e)
+                continue
 
     for img in images:
         im = Image.open(f'{input_folder_path}/{img}')
