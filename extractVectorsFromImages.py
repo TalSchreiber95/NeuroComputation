@@ -52,7 +52,7 @@ def main():
                 im = Image.open(filePathInput)
                 im_bw = im.convert("1")
                 inverted_im_bw = im_bw.point(lambda x: 0 if x == 255 else 255)
-                inverted_im_bw.show()
+                # inverted_im_bw.show()
                 vector = []
                 if name.startswith("bet"):
                     filename = "bet"
@@ -68,14 +68,16 @@ def main():
                 my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
                 with open(f'{filePathOutput}/{filename}', 'a+') as file:
                     file.write(my_string + "\n")
+                with open(f'{filePathOutput}/result.txt', 'a+') as file:
+                    file.write(my_string + "\n")
                 image = vector_to_image(returned_vector[1:])
-                image.show()
+                # image.show()
 
                 im = Image.open(filePathInput)
                 im_bw = im.convert("1")
                 inverted_im_bw = im_bw.point(lambda x: 0 if x == 255 else 255)
                 left_rotated_image = inverted_im_bw.rotate(15, expand=True)
-                left_rotated_image.show()
+                # left_rotated_image.show()
                 vector = []
                 if name.startswith("bet"):
                     filename = "betLeft"
@@ -90,15 +92,17 @@ def main():
                 my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
                 with open(f'{filePathOutput}/{filename}', 'a+') as file:
                     file.write(my_string + "\n")
+                with open(f'{filePathOutput}/result.txt', 'a+') as file:
+                    file.write(my_string + "\n")
                 image = vector_to_image(returned_vector[1:])
-                image.show()
+                # image.show()
 
             
                 im = Image.open(filePathInput)
                 im_bw = im.convert("1")
                 inverted_im_bw = im_bw.point(lambda x: 0 if x == 255 else 255)
                 right_rotated_image = inverted_im_bw.rotate(-15, expand=True)
-                right_rotated_image.show()
+                # right_rotated_image.show()
 
                 vector = []
                 if name.startswith("bet"):
@@ -114,8 +118,10 @@ def main():
                 my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
                 with open(f'{filePathOutput}/{filename}', 'a+') as file:
                     file.write(my_string + "\n")
+                with open(f'{filePathOutput}/result.txt', 'a+') as file:
+                    file.write(my_string + "\n")
                 image = vector_to_image(returned_vector[1:])
-                image.show()
+                # image.show()
             else: 
                 print(f'File name is invalid {file}')
 
