@@ -9,8 +9,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 _project_path = os.path.dirname(os.path.realpath(__file__))
-input_path = f'{_project_path}data/input'
-output_path = f'{_project_path}data/output'
+input_path = f'{_project_path}/data/input'
+output_path = f'{_project_path}/data/output'
 images_dictionary = ["bet", "lamed", "mem"]
 
 config = {

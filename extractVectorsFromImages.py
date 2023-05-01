@@ -4,8 +4,7 @@ import os
 from setting import config
 from utils import validateFileNames
 
-images = ["bet1.png", "bet2.png", "bet3.png", "lamed1.png",
-          "lamed2.png", "lamed3.png", "mem1.png", "mem2.png", "mem3.png"]
+
 output_folder_path = 'data/output'
 input_folder_path = 'data/input'
 
@@ -43,95 +42,82 @@ def main():
 
     input_path = config['input_path']
     images_dictionary = config['images_dictionary']
-
     for r, d, f in os.walk(input_path):
+
         for file in f:
             if validateFileNames(file, images_dictionary) == True:
-                print('file:', file)
-                
-            filePath = os.path.join(r, file)
-            print('Start working on file: ', file)
-            print('Applications left:', num_applications)
-            print('Progress: {:.2f}%'.format(
-                abs(100 - (percent_increment * num_applications))))
-            num_applications -= 1
+                filePathInput = f'{input_folder_path}/{file}'
+                filePathOutput = f'{output_folder_path}'
+                name = file
+                im = Image.open(filePathInput)
+                im_bw = im.convert("1")
+                inverted_im_bw = im_bw.point(lambda x: 0 if x == 255 else 255)
+                inverted_im_bw.show()
+                vector = []
+                if name.startswith("bet"):
+                    filename = "bet"
+                    vector.append(1)
+                elif name.startswith("lamed"):
+                    filename = "lamed"
+                    vector.append(2)
+                elif name.startswith("mem"):
+                    filename = "mem"
+                    vector.append(3)
 
-            try:
-                staticAnalyzer.run(filePath, path, '', label)
-                print()
-            except Exception as e:
-                print(e)
-                continue
+                returned_vector = image_to_vector(inverted_im_bw, vector)
+                my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
+                with open(f'{filePathOutput}/{filename}', 'a+') as file:
+                    file.write(my_string + "\n")
+                image = vector_to_image(returned_vector[1:])
+                image.show()
 
-    for img in images:
-        im = Image.open(f'{input_folder_path}/{img}')
-        im_bw = im.convert("1")
-        inverted_im_bw = im_bw.point(lambda x: 0 if x == 255 else 255)
-        # inverted_im_bw.show()
-        vector = []
-        if img.startswith("bet"):
-            filename = "bet"
-            vector.append(1)
-        elif img.startswith("lamed"):
-            filename = "lamed"
-            vector.append(2)
-        elif img.startswith("mem"):
-            filename = "mem"
-            vector.append(3)
+                im = Image.open(filePathInput)
+                im_bw = im.convert("1")
+                inverted_im_bw = im_bw.point(lambda x: 0 if x == 255 else 255)
+                left_rotated_image = inverted_im_bw.rotate(15, expand=True)
+                left_rotated_image.show()
+                vector = []
+                if name.startswith("bet"):
+                    filename = "betLeft"
+                    vector.append(1)
+                elif name.startswith("lamed"):
+                    filename = "lamedLeft"
+                    vector.append(2)
+                elif name.startswith("mem"):
+                    filename = "memLeft"
+                    vector.append(3)
+                returned_vector = image_to_vector(left_rotated_image, vector)
+                my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
+                with open(f'{filePathOutput}/{filename}', 'a+') as file:
+                    file.write(my_string + "\n")
+                image = vector_to_image(returned_vector[1:])
+                image.show()
 
-        returned_vector = image_to_vector(inverted_im_bw, vector)
-        my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
-        with open(f'{output_folder_path}/{filename}', 'a+') as file:
-            file.write(my_string + "\n")
-        image = vector_to_image(returned_vector[1:])
-        # image.show()
+            
+                im = Image.open(filePathInput)
+                im_bw = im.convert("1")
+                inverted_im_bw = im_bw.point(lambda x: 0 if x == 255 else 255)
+                right_rotated_image = inverted_im_bw.rotate(-15, expand=True)
+                right_rotated_image.show()
 
-    for img in images:
-        im = Image.open(f'{input_folder_path}/{img}')
-        im_bw = im.convert("1")
-        inverted_im_bw = im_bw.point(lambda x: 0 if x == 255 else 255)
-        left_rotated_image = inverted_im_bw.rotate(15, expand=True)
-        # left_rotated_image.show()
-        vector = []
-        if img.startswith("bet"):
-            filename = "betLeft"
-            vector.append(1)
-        elif img.startswith("lamed"):
-            filename = "lamedLeft"
-            vector.append(2)
-        elif img.startswith("mem"):
-            filename = "memLeft"
-            vector.append(3)
-        returned_vector = image_to_vector(left_rotated_image, vector)
-        my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
-        with open(f'{output_folder_path}/{filename}', 'a+') as file:
-            file.write(my_string + "\n")
-        image = vector_to_image(returned_vector[1:])
-        image.show()
-
-    for img in images:
-        im = Image.open(f'{input_folder_path}/{img}')
-        im_bw = im.convert("1")
-        inverted_im_bw = im_bw.point(lambda x: 0 if x == 255 else 255)
-        right_rotated_image = inverted_im_bw.rotate(-15, expand=True)
-        # right_rotated_image.show()
-
-        vector = []
-        if img.startswith("bet"):
-            filename = "betRight"
-            vector.append(1)
-        elif img.startswith("lamed"):
-            filename = "lamedRight"
-            vector.append(2)
-        elif img.startswith("mem"):
-            filename = "memRight"
-            vector.append(3)
-        returned_vector = image_to_vector(right_rotated_image, vector)
-        my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
-        with open(f'{output_folder_path}/{filename}', 'a+') as file:
-            file.write(my_string + "\n")
-        image = vector_to_image(returned_vector[1:])
-        # image.show()
+                vector = []
+                if name.startswith("bet"):
+                    filename = "betRight"
+                    vector.append(1)
+                elif name.startswith("lamed"):
+                    filename = "lamedRight"
+                    vector.append(2)
+                elif name.startswith("mem"):
+                    filename = "memRight"
+                    vector.append(3)
+                returned_vector = image_to_vector(right_rotated_image, vector)
+                my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
+                with open(f'{filePathOutput}/{filename}', 'a+') as file:
+                    file.write(my_string + "\n")
+                image = vector_to_image(returned_vector[1:])
+                image.show()
+            else: 
+                print(f'File name is invalid {file}')
 
 
 if __name__ == "__main__":

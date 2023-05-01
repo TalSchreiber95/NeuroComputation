@@ -9,7 +9,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 def validateFileNames(file , validateValues):
     result=False
     for name in validateValues:
-        if file.startwith(name):
+        if file.startswith(name):
             result=True
     return result
 
