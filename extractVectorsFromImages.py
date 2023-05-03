@@ -5,8 +5,8 @@ from setting import config
 from utils import validateFileNames
 
 
-output_folder_path = 'data/output'
-input_folder_path = 'data/input'
+output_path = f'{config["output_path"]}'
+input_path = f'{config["input_path"]}/images'
 
 
 def image_to_vector(img, vector):
@@ -34,20 +34,19 @@ def vector_to_image(vector):
 
 def main():
 
-    if os.path.exists(output_folder_path):
-        file_list = os.listdir(output_folder_path)
+    if os.path.exists(output_path):
+        file_list = os.listdir(output_path)
         for file_name in file_list:
-            file_path = os.path.join(output_folder_path, file_name)
+            file_path = os.path.join(output_path, file_name)
             os.remove(file_path)
 
-    input_path = config['input_path']
     images_dictionary = config['images_dictionary']
     for r, d, f in os.walk(input_path):
 
         for file in f:
             if validateFileNames(file, images_dictionary) == True:
-                filePathInput = f'{input_folder_path}/{file}'
-                filePathOutput = f'{output_folder_path}'
+                filePathInput = f'{input_path}/{file}'
+                filePathOutput = f'{output_path}'
                 name = file
                 im = Image.open(filePathInput)
                 im_bw = im.convert("1")
@@ -66,7 +65,7 @@ def main():
 
                 returned_vector = image_to_vector(inverted_im_bw, vector)
                 my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
-                with open(f'{filePathOutput}/{filename}', 'a+') as file:
+                with open(f'{filePathOutput}/{filename}.txt', 'a+') as file:
                     file.write(my_string + "\n")
                 with open(f'{filePathOutput}/result.txt', 'a+') as file:
                     file.write(my_string + "\n")
@@ -90,7 +89,7 @@ def main():
                     vector.append(3)
                 returned_vector = image_to_vector(left_rotated_image, vector)
                 my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
-                with open(f'{filePathOutput}/{filename}', 'a+') as file:
+                with open(f'{filePathOutput}/{filename}.txt', 'a+') as file:
                     file.write(my_string + "\n")
                 with open(f'{filePathOutput}/result.txt', 'a+') as file:
                     file.write(my_string + "\n")
@@ -116,7 +115,7 @@ def main():
                     vector.append(3)
                 returned_vector = image_to_vector(right_rotated_image, vector)
                 my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
-                with open(f'{filePathOutput}/{filename}', 'a+') as file:
+                with open(f'{filePathOutput}/{filename}.txt', 'a+') as file:
                     file.write(my_string + "\n")
                 with open(f'{filePathOutput}/result.txt', 'a+') as file:
                     file.write(my_string + "\n")
