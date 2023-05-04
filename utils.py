@@ -13,18 +13,21 @@ from setting import config
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def load_data(filename):
-    text_file = open(filename, "r")
-    lines = text_file.readlines()
-    X=[]
-    Y=[]
+
+    X = []
+    Y = []
     TempList = []
-    for i in range(len(lines)):
-        TempList.append(list(ast.literal_eval(lines[i])))
-    X = np.array(TempList)[:, 1:] 
-    Y = np.array(TempList)[:, 0]
-    print('X',X)
-    print('Y',Y)
-    return X, Y
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+        for i in range(len(lines)):
+            try:
+                TempList.append(list(ast.literal_eval(lines[i])))
+            except ValueError:
+                print(f"Could not parse line {i+1} in {filename}: {lines[i]}")
+        for i in range(len(TempList)):
+            X.append(TempList[i][1:len(TempList[i])])
+            Y.append(TempList[i][0])
+    return X,Y
 
 def validateFileNames(file , validateValues):
     result=False
@@ -74,3 +77,4 @@ def randomLines():
     with open(output_file, 'w') as f:
         for row in rows:
             f.write(row)
+

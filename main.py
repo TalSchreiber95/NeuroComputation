@@ -17,20 +17,21 @@ def main():
     # # Optimization for results
     test_size = [0.2]
     results = []
+    print('X',X)
+    print('Y',Y)
+    for size in test_size:
+        for idx in tqdm(range(0, len(test_size)), total=len(test_size),
+                        desc=f"Run on: [0.2]"):
+            # print(f'Run with test size of {test_size[idx]}\n')
 
-    # for size in test_size:
-    for idx in tqdm(range(0, len(test_size)), total=len(test_size),
-                    desc=f"Run on: [0.2]"):
-        # print(f'Run with test size of {test_size[idx]}\n')
-
-        # Split data into training and test sets
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, Y, test_size=test_size[idx], shuffle=True)
-        algo = Adaline()
-        algo.fit(X_train,y_train)
-        result = algo.predict(X_test, 1,3)
-        print('result',result)
-        print('y_test',y_test)
+            # Split data into training and test sets
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, Y, test_size=test_size[idx], shuffle=True)
+            algo = Adaline()
+            algo.fit(X_train,y_train)
+            result = algo.predict(X_test, 1,3)
+            print('result',result)
+            print('y_test',y_test)
 
 
 if __name__ == '__main__':

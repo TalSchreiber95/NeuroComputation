@@ -67,7 +67,7 @@ def main():
                 my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
                 with open(f'{filePathOutput}/{filename}.txt', 'a+') as file:
                     file.write(my_string + "\n")
-                with open(f'{filePathOutput}/result.txt', 'a+') as file:
+                with open(f'{filePathOutput}/result', 'a+') as file:
                     file.write(my_string + "\n")
                 image = vector_to_image(returned_vector[1:])
                 # image.show()
@@ -91,7 +91,7 @@ def main():
                 my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
                 with open(f'{filePathOutput}/{filename}.txt', 'a+') as file:
                     file.write(my_string + "\n")
-                with open(f'{filePathOutput}/result.txt', 'a+') as file:
+                with open(f'{filePathOutput}/result', 'a+') as file:
                     file.write(my_string + "\n")
                 image = vector_to_image(returned_vector[1:])
                 # image.show()
@@ -117,7 +117,7 @@ def main():
                 my_string = '(' + ', '.join(str(i) for i in returned_vector) + ')'
                 with open(f'{filePathOutput}/{filename}.txt', 'a+') as file:
                     file.write(my_string + "\n")
-                with open(f'{filePathOutput}/result.txt', 'a+') as file:
+                with open(f'{filePathOutput}/result', 'a+') as file:
                     file.write(my_string + "\n")
                 image = vector_to_image(returned_vector[1:])
                 # image.show()
