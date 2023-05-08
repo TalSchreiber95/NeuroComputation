@@ -22,21 +22,23 @@ def main():
         for r, d, f in os.walk(rotate_path):
             # Loop through each file path
             for file_path in f:
-                    # Open file in read mode
-                with open(f'{rotate_path}/{file_path}', 'r') as input_file:
-                    # Loop through each line in the file and write to output file
-                    for line in input_file:
-                        if line.strip() and line.startswith('(') :
-                            result += line
+                if file_path.endswith(".txt"):
+                        # Open file in read mode
+                    with open(f'{rotate_path}/{file_path}', 'r') as input_file:
+                        # Loop through each line in the file and write to output file
+                        for line in input_file:
+                            if line.strip() and line.startswith('(') :
+                                result += line
 
         for r, d, f in os.walk(normal_path):
             # Loop through each file path
             for file_path in f:
                 # Loop through each line in the file and write to output file
-                with open(f'{normal_path}/{file_path}', 'r') as input_file:
-                    for line in input_file:
-                        if line.strip() and line.startswith('(') :
-                            result += line
+                if file_path.endswith(".txt"):
+                    with open(f'{normal_path}/{file_path}', 'r') as input_file:
+                        for line in input_file:
+                            if line.strip() and line.startswith('(') :
+                                result += line
 
         output_file.write(result.replace(" ","").replace(")(", ")\n("))
     output_file.close()

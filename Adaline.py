@@ -24,5 +24,5 @@ class Adaline:
     def net_input(self, X):
         return np.dot(X, self.weights[1:]) + self.weights[0]
 
-    def predict(self, X, char1, char2):
+    def predict(self, X, char1=-1, char2=1):
         return np.where(self.net_input(X) >= 0.0, char1, char2)
