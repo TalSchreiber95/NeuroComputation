@@ -14,6 +14,7 @@ output_path = f'{_project_path}/dataSet/output'
 output_result_path = f'{_project_path}/dataSet/output/result.txt'
 normal_path = f'{input_path}/normal'
 rotate_path = f'{input_path}/rotate'
+chars = [1,2,3]
 
 images_dictionary = ["bet", "lamed", "mem"]
 config = {
@@ -23,4 +24,5 @@ config = {
     'output_result_path': output_result_path,
     'normal_path': normal_path,
     'rotate_path': rotate_path,
+    'chars': chars,
 }

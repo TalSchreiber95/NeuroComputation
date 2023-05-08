@@ -1,22 +1,28 @@
 import numpy as np
+
 class Adaline:
-    def __init__(self, learning_rate=0.01, max_epochs=100):
-        self.learning_rate = learning_rate
-        self.max_epochs = max_epochs
+    def __init__(self, eta=0.01, epochs=50):
+        self.eta = eta  # learning rate
+        self.epochs = epochs  # number of iterations
+        self.weights = None  # model weights
 
     def fit(self, X, y):
-        self.weights = np.random.rand(X.shape[1] + 1)
-        X = np.insert(X, 0, 1, axis=1) # add bias
-        for epoch in range(self.max_epochs):
-            output = self.activation(np.dot(X, self.weights))
-            error = y - output
-            self.weights += self.learning_rate * np.dot(X.T, error)
-            if np.sum(error**2) < 1e-4:
-                break
+        # initialize weights to small random values
+        self.weights = np.random.uniform(-0.01, 0.01, X.shape[1] + 1)
+
+        for _ in range(self.epochs):
+            # calculate net input
+            net_input = self.net_input(X)
+
+            # calculate errors
+            errors = y - net_input
+
+            # update weights
+            self.weights[1:] += self.eta * X.T.dot(errors)
+            self.weights[0] += self.eta * errors.sum()
+
+    def net_input(self, X):
+        return np.dot(X, self.weights[1:]) + self.weights[0]
 
     def predict(self, X, char1, char2):
-        X = np.insert(X, 0, 1, axis=1) # add bias
-        return np.where(self.activation(np.dot(X, self.weights)) > 0, char1, char2)
-
-    def activation(self, x):
-        return x
+        return np.where(self.net_input(X) >= 0.0, char1, char2)

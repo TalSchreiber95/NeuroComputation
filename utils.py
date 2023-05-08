@@ -12,7 +12,7 @@ from setting import config
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-def load_data(filename):
+def load_data(filename, chars):
 
     X = []
     Y = []
@@ -25,8 +25,9 @@ def load_data(filename):
             except ValueError:
                 print(f"Could not parse line {i+1} in {filename}: {lines[i]}")
         for i in range(len(TempList)):
-            X.append(TempList[i][1:len(TempList[i])])
-            Y.append(TempList[i][0])
+            if TempList[i][0] in chars:
+                X.append(TempList[i][1:len(TempList[i])])
+                Y.append(TempList[i][0])
     return X,Y
 
 def validateFileNames(file , validateValues):
