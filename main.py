@@ -44,22 +44,28 @@ def main():
     value_to_remove = 1
     chars.remove(value_to_remove)
 
+    precentLow=0.12
+    precentHigh=0.88
     # # Load data
-    X, Y = load_data(path, chars)
-
-    #test_size = [0.2]
+    X, Y = load_data(path, chars,precentLow,precentHigh)
+    
+    print('X', len(X))
+    print('Y', len(Y))
+    # print('Y', Y)
+    print('minY', min(Y.count(x) for x in set(Y)))
+    print('maxY', max(Y.count(x) for x in set(Y)))
+    test_size = [0.2]
     X, Y = preprocess_data(X, Y)
 
-    print('X', X)
-    print('Y', Y)
 
-    # for idx in tqdm(range(0, len(test_size)), total=len(test_size),
-    #                 desc=f"Run on: [0.2]"):
+
+    # # for idx in tqdm(range(0, len(test_size)), total=len(test_size),
+    # #                 desc=f"Run on: [0.2]"):
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, Y, test_size=0.2,shuffle=False)
 
-    algo = Adaline(eta=0.001, epochs=100) # eta= learning rate , epochs = number of iterations
+    algo = Adaline(eta=0.01, epochs=80) # eta= learning rate , epochs = number of iterations
 
     algo.fit(X_train, y_train)
 

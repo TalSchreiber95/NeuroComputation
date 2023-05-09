@@ -4,16 +4,55 @@ import numpy as np
 import random
 import warnings
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from numpy.lib.function_base import vectorize
 import ast
 import random
 from setting import config
+from collections import defaultdict
 
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-def load_data(filename, chars):
 
+def check_valid_vector(vector, precentLow, precentHigh):
+    counterNegative = 0
+    vectorSize = len(vector)
+    if vectorSize != 100:
+        return True
+    for i in range(vectorSize):
+        if vector[i] == -1:
+            counterNegative += 1
+    if counterNegative/vectorSize < precentLow or counterNegative/vectorSize > precentHigh:
+        return False
+    else:
+        return True
+
+
+def limit_vectors(X, Y, maximumInd):
+    assert len(X) == len(Y), "X and Y must have the same length"
+    counter = defaultdict(int)
+    X_limited = []
+    Y_limited = []
+    for x, y in zip(X, Y):
+        if counter[y] < maximumInd:
+            X_limited.append(x)
+            Y_limited.append(y)
+            counter[y] += 1
+    return X_limited, Y_limited
+
+
+def much_lists_size_and_shuffle(X, Y):
+   # combine the two lists into a list of tuples
+    combined = list(zip(X, Y))
+    # shuffle the combined list
+    random.shuffle(combined)
+    # unzip the shuffled list into separate X and Y lists
+    X, Y = zip(*combined)
+    # return the minimum index of list Y
+    minimumInd = min(Y.count(x) for x in set(Y))
+    return limit_vectors(X, Y, minimumInd)
+
+
+def load_data(filename, chars, precentLow=0.5, precentHigh=0.8):
     X = []
     Y = []
     TempList = []
@@ -26,16 +65,19 @@ def load_data(filename, chars):
                 print(f"Could not parse line {i+1} in {filename}: {lines[i]}")
         for i in range(len(TempList)):
             if TempList[i][0] in chars:
-                X.append(TempList[i][1:len(TempList[i])])
-                Y.append(TempList[i][0])
-    return X,Y
+                if check_valid_vector(TempList[i][1:len(TempList[i])], precentLow, precentHigh):
+                    X.append(TempList[i][1:len(TempList[i])])
+                    Y.append(TempList[i][0])
+    return much_lists_size_and_shuffle(X, Y)
 
-def validateFileNames(file , validateValues):
-    result=False
+
+def validateFileNames(file, validateValues):
+    result = False
     for name in validateValues:
         if file.startswith(name):
-            result=True
+            result = True
     return result
+
 
 def preprocess_data(X, Y):
     """"
@@ -60,6 +102,7 @@ def preprocess_data(X, Y):
 
     return X_scaled, y_encoded
 
+
 def randomLines():
     path = config['output_result_path']
 
@@ -78,4 +121,3 @@ def randomLines():
     with open(output_file, 'w') as f:
         for row in rows:
             f.write(row)
-
