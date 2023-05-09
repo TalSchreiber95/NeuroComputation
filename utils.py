@@ -51,6 +51,77 @@ def shuffle_lists(X, Y):
     return zip(*combined)
 
 
+def export_to_json(result, file_name):
+    result_json = json.dumps(result, indent=4)
+    with open(file_name, 'w') as f:
+        f.write(result_json)
+    print(f'Successfully exported to {file_name}')
+
+
+def read_information_from_result_from_models(files, resultModelsPath, resultApksPath):
+    json_files = {}
+    for file in files:
+        nameKeys = file.replace(
+            resultModelsPath, '').replace('.json', '').replace('/', '').split('-')
+        json_files[nameKeys[0]] = {}
+
+    for file in files:
+        nameKeys = file.replace(
+            resultModelsPath, '').replace('.json', '').replace('/', '').split('-')
+        json_files[nameKeys[0]][nameKeys[1]] = {}
+        data = read_from_results_models_json(file)
+        json_files[nameKeys[0]][nameKeys[1]] = {
+            'filePath': file,
+            'values': data,
+        }
+    maxValues = {}
+    algorithms = json_files.keys()
+    for algo in algorithms:
+        json_formatted_str = json.dumps(json_files[algo], indent=2)
+        maxValue = getMaxValues(json_files[algo], algo)
+        maxValues[algo] = maxValue
+
+    path = f'{resultApksPath}/bestValuesForAlgorithms.json'
+    # print('path', path)
+    export_to_json(maxValues, path)
+
+def getMaxValues(data, algoName):
+    keys = data.keys()
+    maxValue = {
+        'size': 0,
+        'recall': 0,
+        'precision': 0,
+        'accuracy': 0,
+    }
+    for size in keys:
+        keyAlgo = f'model{algoName}'
+        length = range(len(data[size]['values'][keyAlgo]))
+        for idx in length:
+            value = data[size]['values'][keyAlgo][idx]
+            keyTrainAndTest = f'{keyAlgo}TrainAndTest'
+            keyTrain = f'{keyAlgo}Train'
+            TrainAndTestResult = value[keyTrainAndTest]
+            onlyTrainResult = value[keyTrain]
+            # print('TrainAndTestResult', TrainAndTestResult)
+            # print('onlyTrainResult', onlyTrainResult)
+            if isOverFitting(TrainAndTestResult, onlyTrainResult, algoName) == False:
+                if maxValue['accuracy'] < TrainAndTestResult['accuracy']:
+                    maxValue = TrainAndTestResult
+                    maxValue['size'] = size
+                    maxValue['algoName'] = algoName
+
+    return maxValue
+
+
+def isOverFitting(TrainAndTestResult, TrainResult, algoName):
+    epsilon = 0.05
+
+    accuracy = abs(TrainAndTestResult['accuracy'] - TrainResult['accuracy'])
+    recall = abs(TrainAndTestResult['recall'] - TrainResult['recall'])
+    precision = abs(TrainAndTestResult['precision'] - TrainResult['precision'])
+    return accuracy > epsilon
+
+
 def much_lists_size_and_shuffle(X, Y, shuffle):
     if shuffle:
         X, Y = shuffle_lists(X, Y)
