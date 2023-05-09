@@ -14,17 +14,19 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 def check_valid_vector(vector, precentLow, precentHigh):
-    counterNegative = 0
+    counterPositive = 0
     vectorSize = len(vector)
     if vectorSize != 100:
-        return True
-    for i in range(vectorSize):
-        if vector[i] == -1:
-            counterNegative += 1
-    if counterNegative/vectorSize < precentLow or counterNegative/vectorSize > precentHigh:
         return False
-    else:
+    for i in range(vectorSize):
+        if vector[i] == 1:
+            counterPositive += 1
+    print(
+        f"counterNegative= {vectorSize-counterPositive}, counterPositive= {counterPositive}")
+    if counterPositive/vectorSize > precentLow and counterPositive/vectorSize < precentHigh:
         return True
+    else:
+        return False
 
 
 def limit_vectors(X, Y, maximumInd):
@@ -40,19 +42,24 @@ def limit_vectors(X, Y, maximumInd):
     return X_limited, Y_limited
 
 
-def much_lists_size_and_shuffle(X, Y):
-   # combine the two lists into a list of tuples
+def shuffle_lists(X, Y):
+    # combine the two lists into a list of tuples
     combined = list(zip(X, Y))
     # shuffle the combined list
     random.shuffle(combined)
     # unzip the shuffled list into separate X and Y lists
-    X, Y = zip(*combined)
+    return zip(*combined)
+
+
+def much_lists_size_and_shuffle(X, Y, shuffle):
+    if shuffle:
+        X, Y = shuffle_lists(X, Y)
     # return the minimum index of list Y
     minimumInd = min(Y.count(x) for x in set(Y))
     return limit_vectors(X, Y, minimumInd)
 
 
-def load_data(filename, chars, precentLow=0.5, precentHigh=0.8):
+def load_data(filename, chars, precentLow=0.5, precentHigh=0.8, shuffle=True):
     X = []
     Y = []
     TempList = []
@@ -68,7 +75,7 @@ def load_data(filename, chars, precentLow=0.5, precentHigh=0.8):
                 if check_valid_vector(TempList[i][1:len(TempList[i])], precentLow, precentHigh):
                     X.append(TempList[i][1:len(TempList[i])])
                     Y.append(TempList[i][0])
-    return much_lists_size_and_shuffle(X, Y)
+    return much_lists_size_and_shuffle(X, Y, shuffle)
 
 
 def validateFileNames(file, validateValues):
