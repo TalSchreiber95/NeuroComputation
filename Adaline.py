@@ -18,11 +18,13 @@ class Adaline:
             errors = y - net_input
 
             # update weights
-            self.weights[1:] += self.eta * X.T.dot(errors)
+            self.weights[1:] += self.eta * X.T.dot(errors * net_input * (1 - net_input))
             self.weights[0] += self.eta * errors.sum()
 
     def net_input(self, X):
-        return np.dot(X, self.weights[1:]) + self.weights[0]
+        # apply sigmoid activation to the dot product between X and the weight matrix
+        return 1.0 / (1.0 + np.exp(-(np.dot(X, self.weights[1:]) + self.weights[0])))
 
-    def predict(self, X, char1=-1, char2=1):
-        return np.where(self.net_input(X) >= 0.0, char1, char2)
+    def predict(self, X, char1=0, char2=1):
+        # use a threshold of 0.5 to predict the class labels
+        return np.where(self.net_input(X) >= 0.5, char1, char2)

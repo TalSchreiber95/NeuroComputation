@@ -42,7 +42,7 @@ def main():
     outputPath = f'{config["output_path"]}/output.txt'
     chars = config['chars']
 
-    value_to_remove = 1
+    value_to_remove = 3
     chars.remove(value_to_remove)
 
     precentLow = 0.08  # the low precent of the letter paint
@@ -58,41 +58,45 @@ def main():
     # print('maxY', max(Y.count(x) for x in set(Y)))
     test_size = [0.2]
     X, Y = preprocess_data(X, Y)
+    print("Y",Y)
     maxRun = 60
     result = []
     index = 0
-    for idx in tqdm(range(0, len(test_size)), total=len(test_size),
-                    desc=f"Run on: {test_size[index]}"):
-        for run in range(10, maxRun):
-            for run2 in range(1, maxRun):
-                print(f'run number {run}')
-                epochs=run
-                eta = random.uniform(0, 0.01)
+    # for idx in tqdm(range(0, len(test_size)), total=len(test_size),
+    #                 desc=f"Run on: {test_size[index]}"):
+    #     for run in range(10, maxRun):
+    #         for run2 in range(1, maxRun):
+                # print(f'run number {run}')
+    # # epochs=run
+    # epochs=100
+    # eta = random.uniform(0, 0.01)
 
-                data = {
-                    'epochs': epochs,
-                    'eta': eta,
-                    'accuracy': 0,
-                }
-                # print(f'data {data}')
+    # data = {
+    #     'epochs': epochs,
+    #     'eta': eta,
+    #     'accuracy': 0,
+    # }
+    # print(f'data {data}')
 
-                X_train, X_test, y_train, y_test = train_test_split(
-                    X, Y, test_size=test_size[index], shuffle=False)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, Y, test_size=test_size[index], shuffle=False)
 
-                algo = Adaline(epochs=epochs, eta=eta)
+    algo = Adaline(epochs=50, eta=0.0001)
 
-                algo.fit(X_train, y_train)
+    algo.fit(X_train, y_train)
+    print(f"X_train= {X_train}, \n y_train={y_train}")
+    print(f"X_test= {X_test}, \n y_test={y_test}")
+    resultPredict = algo.predict(X_test, 1, 0)
 
-                resultPredict = algo.predict(X_test, 0, 1)
+    # print('result', resultPredict)
+    # print('y_test', y_test)
 
-                # print('result', resultPredict)
-                # print('y_test', y_test)
-
-                data['accuracy'] = accuracy_score(y_test, resultPredict)
-                result.append(data)
-        index += 1
-        print("result:", result)
-        export_to_json(result, outputPath)
+    # data['accuracy'] 
+    result1 = accuracy_score(y_test, resultPredict)
+    # result.append(data)
+    # index += 1
+    print("result:", result1)
+    export_to_json(result, outputPath)
 
 
 
