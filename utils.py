@@ -21,8 +21,8 @@ def check_valid_vector(vector, precentLow, precentHigh):
     for i in range(vectorSize):
         if vector[i] == 1:
             counterPositive += 1
-    print(
-        f"counterNegative= {vectorSize-counterPositive}, counterPositive= {counterPositive}")
+    # print(
+        # f"counterNegative= {vectorSize-counterPositive}, counterPositive= {counterPositive}")
     if counterPositive/vectorSize > precentLow and counterPositive/vectorSize < precentHigh:
         return True
     else:
