@@ -2,7 +2,7 @@
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from setting import config
-from utils import load_data, preprocess_data, export_to_json
+from utils import load_data, preprocess_data, export_to_json, preprocess_data
 import warnings
 import os
 from glob import glob
@@ -13,28 +13,6 @@ import random
 import numpy as np
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-def preprocess_data(X, Y):
-    """"
-        This function preprocesses the input data by scaling the feature values and encoding the labels as integers.
-
-    Inputs:
-        X (pandas.DataFrame or numpy.ndarray): The feature values to be processed.
-        y (pandas.Series or numpy.ndarray): The labels to be processed.
-
-    Returns:
-        X_scaled (numpy.ndarray): The scaled feature values.
-        y_encoded (numpy.ndarray): The encoded labels.
-
-    """
-    # Scale the feature values using a StandardScaler
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-
-    # Encode the labels as integers
-    le = LabelEncoder()
-    y_encoded = le.fit_transform(Y)
-
-    return X_scaled, y_encoded
 
 
 def main():
@@ -54,6 +32,10 @@ def main():
     index = 0
     x_train, x_test, y_train, y_test = train_test_split(
         X, Y, test_size=test_size[index], shuffle=False)
+    print('X_train',x_train)
+    print('X_test',x_test)
+    print('y_train',y_train)
+    print('y_test',y_test)
     x_train_split = np.array_split(x_train, 5)
     y_train_split = np.array_split(y_train, 5)
     algo = Adaline(epochs=1, eta=0.01)
@@ -66,8 +48,10 @@ def main():
                 arr[rand] += 1
                 algo.fit(x_train_split[rand], y_train_split[rand])
         resultPredict = algo.predict(x_test, 1, 0)
-        result1 = accuracy_score(y_test, resultPredict)
-        sumResult.append(result1)
+        print('resultPredict',resultPredict, len(resultPredict))
+        print('y_test',y_test, len(y_test))
+        result = accuracy_score(y_test, resultPredict)
+        sumResult.append(result)
     print(f"chars classification: {images_dictionary}")
     print(f"sumResults= {sumResult}")
     print(f"Average= {np.sum(sumResult)/5}")

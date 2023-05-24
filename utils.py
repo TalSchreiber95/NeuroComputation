@@ -12,6 +12,29 @@ from collections import defaultdict
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+def preprocess_data(X, Y):
+    """"
+        This function preprocesses the input data by scaling the feature values and encoding the labels as integers.
+
+    Inputs:
+        X (pandas.DataFrame or numpy.ndarray): The feature values to be processed.
+        y (pandas.Series or numpy.ndarray): The labels to be processed.
+
+    Returns:
+        X_scaled (numpy.ndarray): The scaled feature values.
+        y_encoded (numpy.ndarray): The encoded labels.
+
+    """
+    # Scale the feature values using a StandardScaler
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    # Encode the labels as integers
+    le = LabelEncoder()
+    y_encoded = le.fit_transform(Y)
+
+    return X_scaled, y_encoded
+
 
 def check_valid_vector(vector, precentLow, precentHigh):
     counterPositive = 0

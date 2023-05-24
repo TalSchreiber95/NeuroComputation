@@ -4,7 +4,7 @@ from sklearn.preprocessing import LabelEncoder
 from keras.models import Sequential
 from keras.layers import Dense
 from setting import config
-from utils import load_data, preprocess_data, export_to_json
+from utils import load_data, preprocess_data, export_to_json, preprocess_data
 import random
 from sklearn.metrics import accuracy_score
 
@@ -21,13 +21,18 @@ def main():
     shuffle = True
     
     # # Load data
-    data,labels = load_data(path, chars, precentLow, precentHigh, shuffle)
+    X, Y = load_data(path, chars, precentLow, precentHigh, shuffle)
+    test_size = [0.2]
+    X, Y = preprocess_data(X, Y)
     # Encode the labels
-    label_encoder = LabelEncoder()
-    labels_encoded = label_encoder.fit_transform(labels)
+    # label_encoder = LabelEncoder()
+    # labels_encoded = label_encoder.fit_transform(Y)
     # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(data, labels_encoded, test_size=0.2)
-
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
+    print('X_train',X_train)
+    print('X_test',X_test)
+    print('y_train',y_train)
+    print('y_test',y_test)
     # Convert the input data to numpy.ndarray format
     X_train = np.array(X_train)
     y_train = np.array(y_train)
@@ -53,9 +58,13 @@ def main():
                 arr[rand] += 1
                 # Train the neural network
                 model.fit(x_train_split[rand], y_train_split[rand], epochs=10, batch_size=32)  # Example number of epochs and batch size, adjust as needed
-        resultPredict = model.predict(X_train, 1, 0)
+        resultPredict = model.predict(X_test, 1, 0)
+        print('resultPredict',resultPredict)
+        print('len(resultPredict)', len(resultPredict))
+        print('y_test',y_test)
+        print('len(y_test)', len(y_test))
         # result1 = accuracy_score(y_test, resultPredict)
-        loss, accuracy = model.evaluate(X_test, y_test)
+        loss, accuracy = model.evaluate(y_test, resultPredict)
         sumResult.append(accuracy)
 
     print(f"chars classification: {images_dictionary}")
