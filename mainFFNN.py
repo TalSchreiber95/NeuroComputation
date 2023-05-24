@@ -20,19 +20,14 @@ def main():
     precentHigh = 0.8  # the high precent of the letter paint
     shuffle = True
     
-    # # Load data
+    # Load data
     X, Y = load_data(path, chars, precentLow, precentHigh, shuffle)
     test_size = [0.2]
+    # Preprocess data
     X, Y = preprocess_data(X, Y)
-    # Encode the labels
-    # label_encoder = LabelEncoder()
-    # labels_encoded = label_encoder.fit_transform(Y)
+ 
     # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
-    print('X_train',X_train)
-    print('X_test',X_test)
-    print('y_train',y_train)
-    print('y_test',y_test)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=test_size[0])
     # Convert the input data to numpy.ndarray format
     X_train = np.array(X_train)
     y_train = np.array(y_train)
@@ -49,7 +44,7 @@ def main():
     
     # Compile the model
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    sumResult = []
+    accuracyArray = []
     for i in range(5):
         arr = [0, 0, 0, 0, 0]
         while np.sum(arr) < 5:
@@ -59,25 +54,16 @@ def main():
                 # Train the neural network
                 model.fit(x_train_split[rand], y_train_split[rand], epochs=10, batch_size=32)  # Example number of epochs and batch size, adjust as needed
         resultPredict = model.predict(X_test, 1, 0)
-        print('resultPredict',resultPredict)
-        print('len(resultPredict)', len(resultPredict))
-        print('y_test',y_test)
-        print('len(y_test)', len(y_test))
-        # result1 = accuracy_score(y_test, resultPredict)
-        loss, accuracy = model.evaluate(y_test, resultPredict)
-        sumResult.append(accuracy)
+        resultPredict = np.round(resultPredict).flatten()  # Round the predicted values if necessary
+        accuracy = accuracy_score(y_test, resultPredict)
+        accuracyArray.append(accuracy)
 
-    print(f"chars classification: {images_dictionary}")
-    print(f"sumResults= {sumResult}")
-    print(f"Average= {np.sum(sumResult)/5}")
+    print(f"Chars classification: {images_dictionary}")
+    print(f"accuracyArray= {accuracyArray}")
+    print(f"Average= {np.sum(accuracyArray)/5}")
     # Calculate the standard deviation of the array
-    sumResultStd = np.std(sumResult)
-    print("Standard deviation of the sumResult array:", sumResultStd)
+    accuracyArrayStd = np.std(accuracyArray)
+    print("Standard deviation of the accuracyArray array:", accuracyArrayStd)
 
-    # Evaluate the model on the test set
-    # loss, accuracy = model.evaluate(X_test, y_test)
-    # print("Test loss:", loss)
-    # print("Test accuracy:", accuracy)
-    # sumResultStd = np.std(sumResult)  
 if __name__ == '__main__':
     main()
