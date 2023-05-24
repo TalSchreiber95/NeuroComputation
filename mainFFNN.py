@@ -12,7 +12,7 @@ def main():
     # Load the data generated in Part I
     path = config['output_result_path']
     chars = config['chars']
-    value_to_remove = 1
+    value_to_remove = 3
     images_dictionary = config['images_dictionary']
     images_dictionary = np.delete(images_dictionary, value_to_remove-1)
     chars.remove(value_to_remove)
