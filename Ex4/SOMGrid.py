@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class Kohonen:
-    def __init__(self, data: np.ndarray, net_size: int):
+class KohonenGrid:
+    def __init__(self, data: np.ndarray, net_size: int, start, end):
         """
         Initializes the Kohonen class.
 
@@ -11,10 +11,13 @@ class Kohonen:
         :param net_size: Number of neurons.
         """
         rand = np.random.RandomState(0)
-        h = np.sqrt(net_size).astype(int)
-        self.SOM = rand.randint(0, 1000, (h, h, 2)).astype(float) / 1000
+        d = np.sqrt(net_size).astype(int)
+        self.SOM = rand.randint(0, 1000, (d, d, 2)).astype(
+            float) / 1000  # Initialize the SOM grid with random values between 0 and 1
         self.data = data
         self.net_size = net_size
+        self.start = start
+        self.end = end
 
     def find_BMU(self, sample):
         """
@@ -41,16 +44,15 @@ class Kohonen:
         :return: Updated SOM weights.
         """
         x, y = bmu_idx
-        # If the radius is close to zero, only the BMU is changed
-        if radius_sq < 1e-3:
+        if radius_sq < 1e-3:  # If the radius is very small, update only the BMU
             self.SOM[x, y, :] += learn_rate * (sample - self.SOM[x, y, :])
             return self.SOM
-        # Change all cells in a small neighborhood of the BMU
         for i in range(max(0, x - step), min(self.SOM.shape[0], x + step)):
             for j in range(max(0, y - step), min(self.SOM.shape[1], y + step)):
                 dist_sq = np.square(i - x) + np.square(j - y)
-                dist_func = np.exp(-dist_sq / 2 / radius_sq)
-                self.SOM[i, j, :] += learn_rate * dist_func * (sample - self.SOM[i, j, :])
+                dist_func = np.exp(-dist_sq / 2 / radius_sq)  # Calculate the Gaussian neighborhood function
+                self.SOM[i, j, :] += learn_rate * dist_func * (
+                            sample - self.SOM[i, j, :])  # Update the weights based on the neighborhood function
         return self.SOM
 
     def train_SOM(self, learn_rate=.8, radius_sq=1, lr_decay=.1, radius_decay=.1, epochs=10):
@@ -78,10 +80,9 @@ class Kohonen:
             for sample in self.data:
                 x, y = self.find_BMU(sample)
                 self.SOM = self.update_weights(sample, learn_rate, radius_sq, (x, y))
-            self.plot("Grid: curr iter: " + str(epoch) + " , learning rate: " + str(round(learn_rate, 3)))
-            # Update learning rate and radius
-            learn_rate = learn_rate_0 * np.exp(-epoch * lr_decay)
-            radius_sq = radius_0 * np.exp(-epoch * radius_decay)
+            self.plot(f"Algorithm: Grid | iteration number:  {str(epoch)} | learning rate: {str(round(learn_rate, 3))}")
+            learn_rate = learn_rate_0 * np.exp(-epoch * lr_decay)  # Decay the learning rate
+            radius_sq = radius_0 * np.exp(-epoch * radius_decay)  # Decay the radius
         return self.SOM
 
     def plot(self, title):
@@ -90,27 +91,27 @@ class Kohonen:
 
         :param title: Title of the plot.
         """
-        X = self.SOM[:, :, 0]  # X coordinates of each point
-        Y = self.SOM[:, :, 1]  # Y coordinates of each point
+        X = self.SOM[:, :, 0]
+        Y = self.SOM[:, :, 1]
 
         fig, ax = plt.subplots()
-        ax.set_xlim(0, 1)
-        ax.set_ylim(0, 1)
+        ax.set_xlim(self.start, self.end)
+        ax.set_ylim(self.start, self.end)
         for i in range(self.SOM.shape[0]):
-            xs = []  # X coordinates of each point in axis 1 (columns)
-            ys = []  # Y coordinates of each point in axis 1 (rows)
-            xh = []  # X coordinates of each point in axis 0 (columns)
-            yh = []  # Y coordinates of each point in axis 1 (rows)
+            xs = []
+            ys = []
+            xh = []
+            yh = []
             for j in range(self.SOM.shape[1]):
                 xs.append(self.SOM[i, j, 0])
                 ys.append(self.SOM[i, j, 1])
                 xh.append(self.SOM[j, i, 0])
                 yh.append(self.SOM[j, i, 1])
 
-            ax.plot(xs, ys, 'c-', markersize=0.5, linewidth=0.7)  # Changed color to cyan
-            ax.plot(xh, yh, 'c-', markersize=0.5, linewidth=0.7)  # Changed color to cyan
+            ax.plot(xs, ys, 'c-', markersize=0.5, linewidth=0.7)  # Plot horizontal lines
+            ax.plot(xh, yh, 'c-', markersize=0.5, linewidth=0.7)  # Plot vertical lines
 
-        ax.plot(X, Y, color='k', marker='*', linewidth=0, markersize=8, alpha=0.5)
-        ax.scatter(self.data[:, 0], self.data[:, 1], c="m", alpha=0.2)  # Changed color to magenta
+        ax.plot(X, Y, color='k', marker='*', linewidth=0, markersize=8, alpha=0.5)  # Plot the neurons
+        ax.scatter(self.data[:, 0], self.data[:, 1], c="m", alpha=0.2)  # Plot the training data
         plt.title(title)
         plt.show()
